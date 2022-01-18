@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Employe
@@ -10,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="employe", indexes={@ORM\Index(name="fkIdx_45", columns={"id_role"})})
  * @ORM\Entity(repositoryClass="App\Repository\EmployeRepository")
  */
-class Employe
+class Employe implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @var int
@@ -38,14 +40,15 @@ class Employe
     /**
      * @var string
      *
-     * @ORM\Column(name="mot_de_passe", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="mot_de_passe", type="string", length=50, nullable=false)
+     * @var string The hashed password
      */
     private $motDePasse;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="mail", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="mail", type="string", length=50, nullable=false, unique=true)
      */
     private $mail;
 
@@ -94,6 +97,27 @@ class Employe
      */
     private $idRole;
 
+    /**
+     * @ORM\Column(name="role_JWT", type="json")
+     */
+    private $roles = [];
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array {
+        $roles = $this->roles;
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+
     public function getIdEmploye(): ?int
     {
         return $this->idEmploye;
@@ -123,12 +147,12 @@ class Employe
         return $this;
     }
 
-    public function getMotDePasse(): ?string
+    public function getPassword(): ?string
     {
         return $this->motDePasse;
     }
 
-    public function setMotDePasse(string $motDePasse): self
+    public function setPassword(string $motDePasse): self
     {
         $this->motDePasse = $motDePasse;
 
@@ -218,6 +242,40 @@ class Employe
 
         return $this;
     }
+    /**
+     * Returning a salt is only needed, if you are not using a modern
+     * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string {
+        return null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials() {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string {
+        return (string)$this->mail;
+    }
+
+    /**
+     * @deprecated since Symfony 5.3, use getUserIdentifier instead
+     */
+    public function getUsername(): string {
+        return (string)$this->mail;
+    }
+
 
 
 }

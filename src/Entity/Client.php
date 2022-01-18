@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Client
@@ -10,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="client")
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  */
-class Client
+class Client implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @var int
@@ -38,16 +40,17 @@ class Client
     /**
      * @var string
      *
-     * @ORM\Column(name="mot_de_passe", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="mot_de_passe", type="string", length=50, nullable=false)
+     * @var string The hashed password
      */
     private $motDePasse;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="mail_client", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="mail_client", type="string", length=50, nullable=false, unique=true)
      */
-    private $mailClient;
+    private $mail_client;
 
     /**
      * @var string
@@ -113,12 +116,12 @@ class Client
         return $this;
     }
 
-    public function getMotDePasse(): ?string
+    public function getPassword(): ?string
     {
         return $this->motDePasse;
     }
 
-    public function setMotDePasse(string $motDePasse): self
+    public function setPassword(string $motDePasse): self
     {
         $this->motDePasse = $motDePasse;
 
@@ -127,12 +130,12 @@ class Client
 
     public function getMailClient(): ?string
     {
-        return $this->mailClient;
+        return $this->mail_client;
     }
 
     public function setMailClient(string $mailClient): self
     {
-        $this->mailClient = $mailClient;
+        $this->mail_client = $mailClient;
 
         return $this;
     }
@@ -197,5 +200,42 @@ class Client
         return $this;
     }
 
+    public function getUserIdentifier(): string {
+        return (string)$this->mail_client;
+    }
 
+    /**
+     * @deprecated since Symfony 5.3, use getUserIdentifier instead
+     */
+    public function getUsername(): string {
+        return (string)$this->mail_client;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): void {
+        //Pas de role pour les clients
+    }
+
+    public function setRoles(array $roles): void {
+        //PAs de role pour les clients
+    }
+
+    /**
+     *
+     * @see UserInterface
+     */
+    public function getSalt(): ?string {
+        return null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials() {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
 }
+
