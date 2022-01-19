@@ -98,7 +98,7 @@ class Employe implements UserInterface, PasswordAuthenticatedUserInterface
     private $idRole;
 
     /**
-     * @ORM\Column(name="role_JWT", type="json")
+     * @ORM\Column(name="role_JWT", type="json", nullable=true)
      */
     private $roles = [];
 
@@ -108,7 +108,7 @@ class Employe implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array {
         $roles = $this->roles;
 
-        return array_unique($roles);
+        return array_unique(array($roles));
     }
 
     public function setRoles(array $roles): self {

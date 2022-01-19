@@ -15,7 +15,8 @@ class RedacteurController extends AbstractController
     private EmployeRepository $employeRepository;
     private SerializerInterface $serializer;
 
-    public function __construct(EmployeRepository $employeRepository, SerializerInterface $serializer)
+    public function __construct(EmployeRepository $employeRepository,
+                                SerializerInterface $serializer)
     {
         $this->employeRepository = $employeRepository;
         $this->serializer = $serializer;
@@ -24,13 +25,15 @@ class RedacteurController extends AbstractController
     /**
      * @Route("/api/redacteurs", name="app_redacteur_getRedacteurs")
      */
-    public function getRedacteurs(): JsonResponse
+    public function getRedacteurs(EmployeRepository $employeRepository): Response
     {
-        $redacteurs = $this->employeRepository->findAll();
+        $redacteurs = $employeRepository->findAll();
+
         $listRedact= [];
         foreach ($redacteurs as $redacteur) {
             $role = $redacteur->getIdRole();
-            if ($role == 1) $listRedact[] = $redacteur;
+            $roleRedact = $role->getIdRole();
+            if ($roleRedact == 1) $listRedact[] = $redacteur;
         }
 
         $redacteurJson = $this->serializer->serialize($listRedact, 'json');
