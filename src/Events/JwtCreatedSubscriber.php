@@ -14,7 +14,11 @@ class JwtCreatedSubscriber {
 
         $payload = $createdEvent->getData();
 
-        if ($user instanceof Employe) $payload["idRole"] = $user->getIdRole()->getIdRole();
+        if ($user instanceof Employe){
+            $payload["idRole"] = $user->getIdRole()->getIdRole();
+            $payload["prenom"] = $user->getPrenom();
+
+        }
         else $payload["idRole"] = 0;
 
         $createdEvent->setData($payload);
