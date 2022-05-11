@@ -52,6 +52,8 @@ class RedacteurController extends AbstractController
 
     }
 
+
+    //Non opérationel
     /**
      * @Route("/api/redacteurs/delete/{idRedacteur}", name="app_redacteur_deletedRedacteur")
      */
